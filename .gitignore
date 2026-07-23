@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+.venv/
+venv/
+.streamlit/secrets.toml
+config/*.snapshot.json
+*.seen.json
+digests/
+# Private client/brand watches: real client names live in config/clients.*.json
+# (e.g. clients.local.json). Never committed — only the example template is tracked.
+config/clients*.json
+!config/clients.example.json
+config/*.local.json

@@ -1,0 +1,50 @@
+{
+  "_comment": "The lens — WHAT to watch. Marketing-intelligence focus, tilted to the pharma / healthcare / life-sciences vertical. Per topic: 'category' (= a brief section), 'tier' (primary=pillar / context=scan), 'exa_queries' (semantic search, preferred), 'gnews' (a Google News RSS URL as the always-on floor when Exa is off), and 'rss' (clean publisher feeds). Private client/brand watches live in clients.local.json (gitignored) — NEVER here. A topic may set its own 'lookback_days'. Dedupe + memory live in scripts/state.py.",
+  "topics": [
+    {
+      "category": "Measurement & MMM",
+      "tier": "primary",
+      "exa_queries": ["marketing mix modeling pharma OR healthcare", "media mix model healthcare brand measurement", "pharma marketing measurement methodology"],
+      "gnews": "https://news.google.com/rss/search?q=(%22marketing+mix+modeling%22+OR+%22marketing+measurement%22+OR+%22media+mix+model%22)+(pharma+OR+healthcare+OR+%22life+sciences%22)&hl=en-US&gl=US&ceid=US:en",
+      "rss": ["https://getrecast.com/feed/"]
+    },
+    {
+      "category": "Incrementality & Experimentation",
+      "tier": "primary",
+      "exa_queries": ["incrementality testing pharma OR healthcare marketing", "geo experiment healthcare marketing measurement", "causal inference pharma marketing"],
+      "gnews": "https://news.google.com/rss/search?q=(%22incrementality%22+OR+%22geo+experiment%22+OR+%22causal+inference%22)+(pharma+OR+healthcare+marketing)&hl=en-US&gl=US&ceid=US:en",
+      "rss": []
+    },
+    {
+      "category": "BI & Data Platform",
+      "tier": "primary",
+      "exa_queries": ["pharma commercial data platform OR analytics engineering", "life sciences marketing data quality", "healthcare marketing semantic layer OR data warehouse"],
+      "gnews": "https://news.google.com/rss/search?q=(%22pharma+commercial+data%22+OR+%22life+sciences+analytics%22+OR+%22healthcare+marketing+data%22)&hl=en-US&gl=US&ceid=US:en",
+      "rss": []
+    },
+    {
+      "category": "Taxonomy & Governance",
+      "tier": "primary",
+      "exa_queries": ["pharma marketing data governance OR MLR review", "campaign taxonomy pharma OR healthcare", "marketing compliance regulated life sciences"],
+      "gnews": "https://news.google.com/rss/search?q=(%22marketing+data+governance%22+OR+%22MLR%22+OR+%22campaign+taxonomy%22)+(pharma+OR+healthcare)&hl=en-US&gl=US&ceid=US:en",
+      "rss": []
+    },
+    {
+      "category": "AI in Analytics",
+      "tier": "primary",
+      "exa_queries": ["AI in pharma marketing analytics", "agentic analytics healthcare OR life sciences", "generative AI pharma commercial marketing"],
+      "gnews": "https://news.google.com/rss/search?q=(%22AI%22+OR+%22generative+AI%22+OR+%22agentic%22)+(pharma+OR+healthcare)+marketing+analytics&hl=en-US&gl=US&ceid=US:en",
+      "rss": []
+    },
+    {
+      "category": "Industry",
+      "tier": "context",
+      "exa_queries": [],
+      "gnews": "",
+      "rss": ["https://www.mmm-online.com/feed/", "https://www.fiercepharma.com/rss/xml", "https://endpts.com/feed/"]
+    }
+  ],
+  "lookback_days": 16,
+  "_lookback_note": "Bi-weekly cadence (~14 days between runs) → a 16-day window gives ~2 days overlap so a slightly-late run misses nothing. Note: state.py dedupes only releases/discoveries, not news, so an item in the overlap can repeat until news-dedup is added. Client watches in clients.local.json override with their own lookback_days (30).",
+  "exa_results_per_query": 10
+}

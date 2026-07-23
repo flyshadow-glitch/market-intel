@@ -1,0 +1,21 @@
+{
+  "_comment": "GitHub repos tracked for releases (what shipped). The host AI checks each repo's latest release/tag via agent-reach's gh channel, dedupes via scripts/state.py (so a release is never reported twice), and runs discovery_queries via `gh search repos` to surface new-to-you tools. last_stars feeds the long-term history log only — it is not a brief signal. Edit freely for your field.",
+  "repos": [
+    {"repo": "facebookexperimental/Robyn", "last_stars": 1474},
+    {"repo": "google/meridian", "last_stars": 1431},
+    {"repo": "PyMC-Labs/pymc-marketing", "last_stars": 1172},
+    {"repo": "google/lightweight_mmm", "last_stars": 1048},
+    {"repo": "py-why/dowhy", "last_stars": 0},
+    {"repo": "microsoft/EconML", "last_stars": 0},
+    {"repo": "dbt-labs/dbt-core", "last_stars": 0},
+    {"repo": "datahub-project/datahub", "last_stars": 0}
+  ],
+  "discovery_queries": [
+    "marketing mix modeling stars:>50",
+    "incrementality stars:>20",
+    "geo experiment stars:>20",
+    "semantic layer stars:>100",
+    "data lineage stars:>100"
+  ],
+  "_discovery_note": "gh search repos ANDs every term — keep queries to one short phrase plus a stars: qualifier, or they return zero."
+}

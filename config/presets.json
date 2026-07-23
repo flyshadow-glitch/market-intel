@@ -1,0 +1,31 @@
+{
+  "_comment": "Reader profiles — WHO the brief is for, and therefore what the mandatory so-what answers, which sections appear, and what cadence fits. settings.json 'preset' picks one. The lens (feeds.json / clients.local.json) says WHAT to watch; the profile says HOW to read it for this audience. Generic by design: no client or company names here (public repo).",
+  "default": "practitioner-brief",
+  "profiles": {
+    "practitioner-brief": {
+      "audience": "analytics / measurement practitioners and their leads",
+      "cadence": "weekly",
+      "so_what_question": "What does this mean for how we measure, model, and run analytics — methods to adopt, skills to build, vendors to watch?",
+      "tone": "Human and explanatory, like a sharp colleague walking you through it. Full sentences, gloss any jargon in plain terms on first use, land every item on a concrete move for the team (adopt / build / watch). Substance over brevity — this reader wants the why. EDIT THIS LINE to retune.",
+      "sections": ["Bottom line", "one block per topic", "What shipped", "On the radar"],
+      "sources": "topics in feeds.json + watchlist.json (releases & discovery)",
+      "notes": "The canonical format in SKILL.md. Craft altitude: the reader does the work."
+    },
+    "leadership-radar": {
+      "audience": "brand, commercial, and account leadership",
+      "tone": "Human but lean. Warm, plain, concrete, never abstract — but still an executive skim: 'the read' stays 1-2 sentences and the whole brief fits a quick scroll. Humanize the words, not the length. EDIT THIS LINE to retune.",
+      "cadence": "twice weekly (e.g. Mon/Thu) or weekly — timing leaders can react to beats depth",
+      "so_what_question": "What would I want to say in my next client conversation — and what should my team do or watch because of this?",
+      "sections": ["Bottom line (with cross-client triage line)", "prose blocks for the top accounts (capped)", "coverage table (every account)"],
+      "sources": "client/brand topics in clients.local.json (gitignored) with market-reaction follow-ups; skips GitHub releases/discovery entirely",
+      "prose_budget": 5,
+      "notes": "Light reads only — leaders form their own view; deliver signal at the right moment, not essays. 'The read' is 1-2 lines max. At scale, prose_budget caps how many accounts get a block (see SKILL.md 'Leadership-radar at scale'); the rest live in the coverage table. Default 5 (~3 primary + 2 strongest context) keeps the brief skimmable — a 10-account test with budget 7 ran long, and the coverage table absorbs everyone else without losing the 'we checked all of them' guarantee. tier (primary/context) + account_scope on each client topic drive who gets prose and how reads are weighted."
+    },
+    "both": {
+      "audience": "one reader wearing both hats",
+      "tone": "Each half keeps its own tone: leadership-radar blocks lean-but-human, practitioner blocks fuller and explanatory.",
+      "composition": "leadership-radar client blocks first, then practitioner topic blocks; a single Bottom line spanning both; What shipped stays practitioner-only",
+      "cadence": "weekly (the radar half may additionally run alone midweek)"
+    }
+  }
+}

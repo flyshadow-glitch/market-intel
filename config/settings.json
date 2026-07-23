@@ -1,0 +1,5 @@
+{
+  "mode": "personal",
+  "output_dir": "./digests",
+  "preset": "practitioner-brief"
+}

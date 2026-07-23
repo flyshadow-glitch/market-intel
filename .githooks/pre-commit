@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# market-intel pre-commit guard — blocks client-info leaks into this PUBLIC repo.
+# Client monitoring (leadership-radar) is an intended feature; real client names must
+# simply never reach the committed repo. Enable once per clone:
+#   git config core.hooksPath .githooks
+# It aborts a commit if any of these are true:
+#   1) a gitignored file is staged (e.g. clients.local.json via `git add -f`)
+#   2) a committed config/*.json (other than the template) carries a "Client:" topic
+#   3) settings.json output_dir points inside the repo but is not gitignored
+#   4) staged content contains a private term from clients.local.json, or a
+#      real-looking Slack ID (catches "filled in the template in place")
+
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Build the private-term denylist from clients.local.json (gitignored, never committed):
+# client names, sponsors, query terms — true identifiers only, never generic topic names.
+# Terms under 4 chars and template placeholders (<...>) are dropped.
+denyfile=$(mktemp)
+trap 'rm -f "$denyfile"' EXIT
+if [ -f config/clients.local.json ]; then
+  {
+    grep -hoE '"category"[[:space:]]*:[[:space:]]*"Client:[^"]+"' config/clients.local.json 2>/dev/null \
+      | sed -E 's/.*"Client:[[:space:]]*//; s/"$//'
+    grep -hoE '"clinicaltrials_sponsor"[[:space:]]*:[[:space:]]*"[^"<]+"' config/clients.local.json 2>/dev/null \
+      | sed -E 's/.*:[[:space:]]*"//; s/"$//'
+    grep -hoE '"pubmed_query"[[:space:]]*:[[:space:]]*"[^"<]+"' config/clients.local.json 2>/dev/null \
+      | sed -E 's/.*:[[:space:]]*"//; s/"$//; s/ OR /\n/g; s/ AND /\n/g'
+    # account_scope: the full free-text engagement description (matched verbatim as a substring).
+    # A real scope pasted into a committed file is a leak the category/sponsor terms miss.
+    grep -hoE '"account_scope"[[:space:]]*:[[:space:]]*"[^"<]+"' config/clients.local.json 2>/dev/null \
+      | sed -E 's/.*:[[:space:]]*"//; s/"$//'
+  } | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' | awk 'length($0) >= 4' | sort -u > "$denyfile"
+fi
+
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+
+  # 1) staged-but-ignored (force-add of a local/client file).
+  #    --no-index: consult ignore rules even though the file is now staged/tracked.
+  if git check-ignore --no-index -q "$f"; then
+    echo "BLOCKED: '$f' is gitignored but staged (force-add?). Local/client files must never be committed." >&2
+    fail=1
+  fi
+
+  content=$(git show ":$f" 2>/dev/null)
+  [ -n "$content" ] || continue
+
+  # 2) only clients.example.json may carry a "Client:" category
+  case "$f" in
+    config/*.json)
+      if [ "$f" != "config/clients.example.json" ] \
+         && printf '%s\n' "$content" | grep -Eq '"category"[[:space:]]*:[[:space:]]*"Client:'; then
+        echo "BLOCKED: '$f' has a \"Client:\" topic. Put client watches in config/clients.local.json (gitignored), not in committed config." >&2
+        fail=1
+      fi
+      ;;
+  esac
+
+  # 4a) real-looking Slack ID (template placeholders like U0XXXXXXX are allowed)
+  ids=$(printf '%s\n' "$content" | grep -oE '\b[UC]0[A-Z0-9]{7,}\b' | grep -vE '^[UC]0X+$' | sort -u)
+  if [ -n "$ids" ]; then
+    echo "BLOCKED: '$f' contains a real-looking Slack ID ($(printf '%s' "$ids" | tr '\n' ' ')). Delivery targets belong in gitignored config, not committed files." >&2
+    fail=1
+  fi
+
+  # 4b) any private term from clients.local.json (awk index(), not grep -F:
+  #     this Git Bash grep build SIGABRTs on -F with a pattern file)
+  if [ -s "$denyfile" ]; then
+    hit=$(awk 'NR==FNR { if (length($0) > 0) terms[tolower($0)] = $0; next }
+               { l = tolower($0); for (t in terms) if (index(l, t) > 0) print terms[t] }' \
+          "$denyfile" <(printf '%s\n' "$content") | sort -u | head -3 | paste -sd, -)
+    if [ -n "$hit" ]; then
+      echo "BLOCKED: '$f' contains private term(s) [$hit] found in config/clients.local.json. Keep them out of committed files." >&2
+      fail=1
+    fi
+  fi
+done <<EOF
+$staged
+EOF
+
+# 3) settings.json output_dir must be gitignored or out-of-repo
+if printf '%s\n' "$staged" | grep -q '^config/settings\.json$'; then
+  out=$(git show ":config/settings.json" 2>/dev/null \
+        | grep -oE '"output_dir"[[:space:]]*:[[:space:]]*"[^"]*"' \
+        | sed -E 's/.*"output_dir"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/')
+  if [ -n "$out" ]; then
+    case "$out" in
+      /*|[A-Za-z]:*) ;;                      # absolute / out-of-repo path is fine
+      *)
+        rel=${out#./}
+        if ! git check-ignore -q "$rel"; then
+          echo "BLOCKED: settings.json output_dir '$out' is inside the repo but NOT gitignored — signal dumps could leak. Use ./digests or an out-of-repo path." >&2
+          fail=1
+        fi
+        ;;
+    esac
+  fi
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "" >&2
+  echo "pre-commit guard aborted the commit (see messages above)." >&2
+  exit 1
+fi
+exit 0

@@ -1,0 +1,27 @@
+# Server-side backstop for the .githooks/pre-commit leak guard: the client-side hook
+# is opt-in per clone and skippable with --no-verify; this check is not.
+name: leak-guard
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Block client leaks into committed config
+        run: |
+          fail=0
+
+          # "Client:" categories may exist only in the committed example template
+          hits=$(grep -rlE '"category"[[:space:]]*:[[:space:]]*"Client:' --include='*.json' config/ | grep -v 'clients.example.json' || true)
+          if [ -n "$hits" ]; then echo "::error::Client watch in committed config: $hits"; fail=1; fi
+
+          # Real-looking Slack IDs anywhere in the tree (template placeholders U0XXXXXXX allowed)
+          ids=$(grep -rhoE '\b[UC]0[A-Z0-9]{7,}\b' --exclude-dir=.git --exclude-dir=.github . | grep -vE '^[UC]0X+$' | sort -u || true)
+          if [ -n "$ids" ]; then echo "::error::Real-looking Slack ID committed: $ids"; fail=1; fi
+
+          # config/clients.local.json (and any clients.*.json variant) must never be tracked
+          tracked=$(git ls-files 'config/clients*' | grep -v 'clients.example.json' || true)
+          if [ -n "$tracked" ]; then echo "::error::Private client config file tracked: $tracked"; fail=1; fi
+
+          exit $fail

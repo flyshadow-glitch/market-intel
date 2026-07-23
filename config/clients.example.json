@@ -1,0 +1,17 @@
+{
+  "_comment": "TEMPLATE — copy this to clients.local.json (gitignored) and put REAL client watches there. NEVER add real client names to this file or to feeds.json: both are committed to a PUBLIC repo. Same topic schema as feeds.json. Optional per-topic 'lookback_days' widens the recency window (e.g. 30) for slower-cadence brand/pharma news. Optional 'clinicaltrials_sponsor' and 'pubmed_query' enrich pharma/biotech watches via those connectors (omit for non-pharma clients). Optional 'account_scope' (free text) describes your actual engagement/remit with this account — leadership-radar uses it to weight relevance and mark each read in-scope vs. adjacent, and to pick the cross-client triage line.",
+  "topics": [
+    {
+      "category": "Client: Example Co (REPLACE ME)",
+      "tier": "primary",
+      "_tier_note": "leadership-radar: 'primary' = always gets a prose block (even 'quiet this period'); 'context' = block only on a material event, else a coverage-table row. MD owns tiering by strategic priority (spend + growth/pilot + renewal/risk), not spend alone.",
+      "lookback_days": 30,
+      "exa_queries": ["<Company> news", "<lead product> data readout OR launch", "<Company> regulatory OR financing OR partnership"],
+      "gnews": "https://news.google.com/rss/search?q=%22Example+Co%22&hl=en-US&gl=US&ceid=US:en",
+      "rss": [],
+      "clinicaltrials_sponsor": "<sponsor name — pharma/biotech only, else omit>",
+      "pubmed_query": "<drug or asset name — biomedical only, else omit>",
+      "account_scope": "<e.g. 'AOR for HCP media on <brand>; piloting <other division>' — omit if not yet known>"
+    }
+  ]
+}
