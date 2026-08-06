@@ -1,0 +1,14 @@
+{
+  "_comment": "TEMPLATE — copy to voice.local.json (gitignored) to record YOUR team's house style. SKILL.md 'Voice' holds the generic defaults; this file overrides them for your room. Record PATTERNS ONLY — never a channel name, a person's name, an employer, or copied post content. To build it, skim recent posts in the channels the brief lands in and describe how they are structured.",
+  "_how_to_use": "If config/voice.local.json exists, the skill follows it over the SKILL.md defaults. Delete the file to fall back to defaults.",
+
+  "register": "<e.g. 'direct and plain; first person is fine; dry humor in the framing, never in the analysis'>",
+  "item_shape": "<e.g. 'content-matched emoji + bold sentence-case headline carrying the verdict, then 1-2 short paragraphs'>",
+  "opener": "<e.g. 'one honest line characterizing the period as a whole, including when it was thin'>",
+  "action_style": "<e.g. 'one consolidated action block at the end, not a takeaway per item'>",
+  "attribution": "<e.g. 'name whoever surfaced an item when it came from a person rather than a feed'>",
+  "hedging": "<e.g. 'state judgment plainly; mark what is unverified; append visible corrections rather than silently editing'>",
+  "closing": "<e.g. 'one short line inviting correction'>",
+  "avoid": ["<e.g. 'a so-what label on every block'>", "<e.g. 'title-case headings'>", "<e.g. 'hype adjectives'>"],
+  "emoji": "<e.g. 'one per item, chosen for meaning, never decorative' — or 'none' if your room does not use them>"
+}

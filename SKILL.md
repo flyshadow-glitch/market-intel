@@ -155,6 +155,38 @@ Write like a sharp colleague explaining it to you, not a wire service. Default a
   evolving." Say the real thing.
 - **Warm, not fluffy.** Humanize the phrasing; never pad. No hype words, no throat-clearing.
 
+**Sound like a person posting, not a report generating.** Removing AI tells is not the same as
+having a voice. The shape below is how good internal briefs actually read in a team channel —
+adopt it unless the local calibration says otherwise:
+- **Lead each item with an emoji that matches its content**, then a bold headline. One emoji per
+  item, chosen for meaning (a shield for security, a pill for regulatory), never decoration.
+- **The headline is a complete sentence carrying the verdict**, in sentence case — "Vendor X
+  shipped Y, and it undercuts Z" beats "Vendor X update". Put the judgment in the headline; a
+  reader who stops there should still get the point. A parenthetical verdict is welcome:
+  "(but there are better options)".
+- **Open with one honest line about the period as a whole**, including when it was thin: "A
+  quieter week — the useful signal was ..." A slow period reported as slow builds more trust than
+  a slow period dressed up.
+- **Credit whoever surfaced it** when the item came from a person, not a feed.
+- **One consolidated action at the end, not a so-what stapled to every block.** Close with a
+  single "Act on this" naming the one or two things worth doing. Per-item takeaways in every
+  block are the fastest way to sound like a machine.
+- **State judgment plainly and hedge honestly.** "This looks incremental." "Worth a look, but I
+  haven't verified the pricing claim." Say what you actually think, and mark what you're unsure
+  of. If a later fact corrects an earlier one, append the correction visibly rather than quietly
+  rewriting.
+- **Note first-hand checks** — "I ran this and it works" carries more weight than a summary.
+- **Short paragraphs, one to two sentences, blank line between.** Address the reader as "you".
+- **Close by inviting correction** — one short line ("Reply with anything you'd tweak").
+- Dry humor is fine in the framing; keep it out of the analysis.
+
+**Calibrate to the room (optional, local only).** Voice is team-specific, so any observed
+house style lives in `config/voice.local.json` (gitignored — copy `config/voice.example.json`).
+If that file exists, follow it over the defaults above. To build it, read a sample of recent
+posts in the channels this brief will land in and record the *patterns* — structure, register,
+how actions get phrased. Record patterns only: never copy a channel name, a person's name, an
+employer, or any content into the repo.
+
 Length and register are set per profile by its `tone` in `presets.json` — the practitioner brief
 runs fuller and explanatory; the leadership radar stays an executive skim (humanize the words, not
 the length). **Read the active profile's `tone` and follow it**; edit that one line to retune
@@ -313,7 +345,7 @@ look complete. Three all-signal items beat six half-filler ones. When narrative 
 "What shipped" and the coverage/tooling sections as the anchor rather than reaching.
 
 ASSUME A GEN-AI SIBLING BRIEF. Readers already get general gen-AI and AI-in-R&D coverage
-elsewhere (a separate #gen-ai / frontier-models digest). So this brief's AI items qualify ONLY
+elsewhere (a separate frontier-models digest). So this brief's AI items qualify ONLY
 with a direct pharma-**commercial** angle — martech, orchestration, HCP/DTC engagement,
 measurement. A frontier-model release, an AI-in-drug-discovery story, or generic enterprise-AI
 news is out of lens here; if one is too big to ignore, give it a single "context (likely already
