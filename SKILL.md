@@ -68,6 +68,14 @@ the intake, run with the defaults — the skill must always work out of the box.
   `clients.example.json` to start. Real client names live ONLY in this local file — never in
   `feeds.json` (the repo is public).
 
+- `stack.local.json` (optional; **gitignored**) → `stack`, the tools, platforms and vendors this
+  team actually runs, and `watch_competitors`. Drives the "this one is yours" check and the
+  cross-brief link below. Copy `stack.example.json` to start. If the file is missing or its
+  `stack` array is empty, skip both checks and keep hedging ("if you run X") rather than
+  guessing — a wrong "this is ours" is worse than no claim.
+- `voice.local.json` (optional; **gitignored**) → observed house style; overrides the Voice
+  defaults. Copy `voice.example.json`.
+
 Run `agent-reach doctor --json` first to see which channels are live; gather only via
 channels reporting `ok` and note any you skipped.
 
@@ -206,6 +214,36 @@ intensifiers like "genuinely", template phrasing). A humanized brief scores in t
 digits; if it comes back above ~15, rewrite the flagged lines and re-score before sending. Engine
 is avoid-ai-writing (MIT); see `tools/ai-writing-detector/`.
 
+## Situate every item (know your own stack, link across briefs)
+
+A brief that reports the industry is interesting. A brief that reports **your position in it** is
+the one people come to depend on. Two checks, both driven by `stack.local.json`. If that file is
+absent or empty, skip them and hedge honestly instead of guessing.
+
+**1. "This one is yours."** Check every gathered item against `stack`. On a match, say so in the
+item's first sentence and make the action specific:
+- Generic: *"Any model built on 1.7.0 or earlier may have been affected."*
+- Situated: *"We run 1.7.0 in three models, so this one is ours. Re-run them."*
+Match on `version` too where the entry has one — a bug or deprecation notice only matters for the
+versions actually in use. Respect `status`: a **production** match is an action, a **pilot** or
+**evaluating** match is a decision input, a **retired** match is usually noise. Never claim
+ownership the file does not support; an unmatched item stays industry context.
+
+**2. Cross-brief link.** The two profiles gather different worlds — the practitioner brief sees
+vendors and competitors, the leadership radar sees accounts — and the value is often in the join,
+which neither sees alone. So:
+- When an item names anything in `watch_competitors`, or is a competitive move into work we sell,
+  check it against the account book (`clients.local.json`) and name the accounts it could touch:
+  *"A rival just launched an AI measurement product aimed at this work; the accounts most exposed
+  are the ones where we hold the measurement remit."*
+- When a client item implies an industry shift (a payer decision, a regulatory action against a
+  peer), note that the practitioner brief's readers need it too.
+- Add the link as one sentence inside the item. Do not build a separate cross-reference section,
+  and do not re-report the other brief's item in full — point at it.
+
+Run both checks during synthesis, not gathering: they shape how an item is written, not whether
+it was found.
+
 ## The brief format (this is the product)
 
 A busy leader reads it in under a minute. Aim for **under 300 words** even with several
@@ -263,6 +301,12 @@ quality bar. Same hard rules always apply (so-what mandatory, every item linked,
      `account_scope`**, say explicitly whether this event sits inside that scope ("squarely in
      our media remit — bring it to the next client review") or outside it ("outside our current/pilot
      scope — track for brand awareness, not an action item").
+  **An at-a-glance table above the blocks** — `account · what changed · signal` — so the whole
+  period is scannable before any prose. **`signal` means what changes for *us*, not which way the
+  stock moved.** Rank by whether the item touches our scope, our relationship, or our revenue; a
+  share-price move is at most supporting colour inside that cell, never the cell's point. A CEO
+  departure at an account outranks a 5% share move, because one changes who we deal with and the
+  other does not.
   **After all blocks, one cross-client triage line** — "If you read one thing: `<item>`,
   because `<reason>`" — the single most useful item across every account this run, not just the
   biggest headline. Weight `account_scope` relevance above raw size when picking it. This goes

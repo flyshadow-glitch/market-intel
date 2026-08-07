@@ -1,0 +1,22 @@
+{
+  "_comment": "TEMPLATE — copy to stack.local.json (gitignored) and list the tools, platforms and vendors YOUR team actually runs. This is what turns industry news into news about you: when a gathered item names something in this file, the brief says so explicitly instead of hedging ('if you use X'). Keep vendor/contract detail out of the public repo — this template ships with placeholders only.",
+  "_how_to_use": "If config/stack.local.json exists, check every gathered item against it. On a match, lead with the fact that it is ours (see SKILL.md, 'Know your own stack'). Unmatched items stay industry context. Delete the file to disable the check.",
+  "_filling_it_in": "Best filled with whoever owns the stack (analytics lead, data platform lead). Only list what you genuinely run — a wrong entry produces a confidently wrong 'this is yours'. Add `version` where a version actually matters (a bug notice is only relevant to the versions you run). Use `status` to distinguish what is in production from what is a pilot or under evaluation.",
+
+  "stack": [
+    {
+      "name": "<vendor or tool, as it appears in the press, e.g. 'Google Meridian'>",
+      "category": "<mmm | attribution | incrementality | clean-room | identity | bi | warehouse | transformation | dsp | measurement-vendor | consent | other>",
+      "version": "<optional, only where version matters, e.g. '1.7.0'>",
+      "status": "<production | pilot | evaluating | retired>",
+      "owner": "<optional team or role that owns it>",
+      "note": "<optional: what we use it for, so the brief can say why an item matters>"
+    }
+  ],
+
+  "watch_competitors": [
+    "<agency or vendor that competes with our offering, e.g. a rival healthcare-marketing agency>"
+  ],
+
+  "_watch_competitors_note": "Names listed here are matched against gathered items so a competitor's product launch can be cross-referenced against the account book (see SKILL.md, 'Cross-brief link'). Competitors are usually public companies, but treat this list as local config anyway."
+}
