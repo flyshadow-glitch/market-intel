@@ -158,8 +158,15 @@ Write like a sharp colleague explaining it to you, not a wire service. Default a
 **Sound like a person posting, not a report generating.** Removing AI tells is not the same as
 having a voice. The shape below is how good internal briefs actually read in a team channel —
 adopt it unless the local calibration says otherwise:
-- **Lead each item with an emoji that matches its content**, then a bold headline. One emoji per
-  item, chosen for meaning (a shield for security, a pill for regulatory), never decoration.
+- **Voice is word choice, not layout.** What travels from a team's channel is how they *talk*:
+  plain, direct, willing to judge. Do not copy their formatting wholesale. In particular, a brief
+  is a scanned document, not a chat post, so it needs more structure than a post does.
+- **Never a wall of prose.** Keep each item to two or three sentences and let structure carry the
+  rest: section headings, bullets for enumerated facts, and tables wherever data repeats across
+  items (dates, accounts, status). A weekly brief that is nothing but paragraphs is harder to read
+  than the terse version it replaced, however human the sentences are.
+- **Default to no emoji.** Some rooms use them heavily; a brief is not that surface, and readers
+  differ. Use them only if the local calibration explicitly asks for them.
 - **The headline is a complete sentence carrying the verdict**, in sentence case — "Vendor X
   shipped Y, and it undercuts Z" beats "Vendor X update". Put the judgment in the headline; a
   reader who stops there should still get the point. A parenthetical verdict is welcome:

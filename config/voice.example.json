@@ -10,5 +10,7 @@
   "hedging": "<e.g. 'state judgment plainly; mark what is unverified; append visible corrections rather than silently editing'>",
   "closing": "<e.g. 'one short line inviting correction'>",
   "avoid": ["<e.g. 'a so-what label on every block'>", "<e.g. 'title-case headings'>", "<e.g. 'hype adjectives'>"],
-  "emoji": "<e.g. 'one per item, chosen for meaning, never decorative' — or 'none' if your room does not use them>"
+  "emoji": "<'none' by default. Only set otherwise if your readers actually want them in a brief — chat style and brief style differ.>",
+  "layout": "<How much structure the brief needs. Borrow tone from your channels, not their chat formatting: a brief is scanned, so it usually needs MORE structure than a post — headings, bullets, and tables wherever fields repeat. Note any per-item length ceiling here.>",
+  "visuals": "<Where tables or other visuals earn their place, e.g. 'forward calendar, coverage roster, any at-a-glance comparison'. Note what the delivery channel can actually render.>"
 }
