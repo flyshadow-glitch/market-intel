@@ -44,7 +44,7 @@
       "rss": ["https://www.mmm-online.com/feed/", "https://www.fiercepharma.com/rss/xml", "https://endpts.com/feed/"]
     }
   ],
-  "lookback_days": 16,
-  "_lookback_note": "Bi-weekly cadence (~14 days between runs) → a 16-day window gives ~2 days overlap so a slightly-late run misses nothing. Note: state.py dedupes only releases/discoveries, not news, so an item in the overlap can repeat until news-dedup is added. Client watches in clients.local.json override with their own lookback_days (30).",
+  "lookback_days": 9,
+  "_lookback_note": "Weekly cadence (analytics brief, Mondays) → a 9-day window gives ~2 days overlap so a slightly-late run misses nothing. News IS deduped by normalized URL in state.py, so overlap costs a little fetching but never a repeat. Client watches in clients.local.json override with their own lookback_days (30) for the slower bi-weekly radar.",
   "exa_results_per_query": 10
 }

@@ -19,7 +19,8 @@ CLI:
   state.py catalyst add 2026-11-30 "Acme Bio PDUFA"   # persist a forward catalyst
   state.py catalyst list [--today YYYY-MM-DD]          # upcoming catalysts (prunes past)
 
-News keys are normalized (scheme/www/query/fragment/trailing-slash stripped) so the same
+News keys are normalized (scheme/www/fragment/trailing-slash and tracking params
+stripped; real query identifiers kept) so the same
 story is reported once, while a genuine development at a NEW url surfaces on its own. The
 catalyst calendar recurs a dated future event every run until its date passes — the honest
 "reminder", distinct from re-reporting old news.
@@ -38,15 +39,37 @@ _KINDS = {"releases": "releases.seen.json", "discovery": "discovery.seen.json",
           "news": "news.seen.json"}
 
 
+# Query params that carry no article identity. Everything else is kept, because
+# on plenty of publisher and IR portals the query string IS the article id
+# (?id=, ?p=, ?storyId=) and dropping it merges unrelated stories into one key.
+_TRACKING_PARAMS = {
+    "utm", "oc", "gclid", "fbclid", "msclkid", "twclid", "yclid", "igshid",
+    "mc_cid", "mc_eid", "_hsenc", "_hsmi", "ref", "referrer", "source",
+    "cmpid", "cmp", "spm", "at_medium", "at_campaign", "s_kwcid",
+}
+
+
 def _normalize_news_key(url: str) -> str:
     """Normalize a news URL so trivial variance (scheme, www, tracking params,
-    fragment, trailing slash, case) doesn't defeat report-once. A genuinely
-    different URL (a follow-up article) normalizes differently and stays new."""
+    fragment, trailing slash, case, param order) doesn't defeat report-once. A
+    genuinely different URL (a follow-up article, or a different ?id=) normalizes
+    differently and stays new."""
     u = url.strip().lower()
     u = re.sub(r"^https?://", "", u)
     u = re.sub(r"^www\.", "", u)
-    u = u.split("#", 1)[0].split("?", 1)[0]
-    return u.rstrip("/")
+    u = u.split("#", 1)[0]
+    path, _, query = u.partition("?")
+    path = path.rstrip("/")
+    if not query:
+        return path
+    kept = [
+        part for part in query.split("&")
+        if part and not (
+            part.split("=", 1)[0].startswith("utm_")
+            or part.split("=", 1)[0] in _TRACKING_PARAMS
+        )
+    ]
+    return path + ("?" + "&".join(sorted(kept)) if kept else "")
 
 
 def _key(kind: str, k: str) -> str:
@@ -161,10 +184,36 @@ def add_catalyst(date_str: str, label: str, out_dir: str | None = None) -> list:
 
 
 def upcoming_catalysts(out_dir: str | None = None, today: str | None = None) -> list:
-    """Return catalysts dated today-or-later, sorted; prune past ones from the file."""
-    today = today or date.today().isoformat()
+    """Return catalysts dated today-or-later, sorted; prune past ones from the file.
+
+    `today` must be a zero-padded ISO date. This is a destructive read — it saves
+    the pruned list — so an unparseable date is refused BEFORE the file is opened.
+    Dates are compared as strings, and a non-ISO string ("Aug 21, 2026", "today",
+    "2026-8-21") can sort above every real date, which would prune the entire
+    ledger. Raising is the only safe response.
+    """
+    if today is None:
+        today = date.today().isoformat()
+    else:
+        try:
+            if date.fromisoformat(today).isoformat() != today:
+                raise ValueError
+        except (ValueError, TypeError):
+            raise ValueError(
+                f"today must be a zero-padded ISO date (YYYY-MM-DD), got {today!r}; "
+                f"refusing to prune the catalyst ledger on an unparseable date"
+            ) from None
+
+    def _keep(c) -> bool:
+        d = c.get("date", "")
+        try:
+            date.fromisoformat(d)
+        except (ValueError, TypeError):
+            return True   # fail-open: surface a corrupt row, never silently prune it
+        return d >= today
+
     items = load_catalysts(out_dir)
-    upcoming = sorted((c for c in items if c.get("date", "") >= today),
+    upcoming = sorted((c for c in items if _keep(c)),
                       key=lambda c: (c.get("date", ""), c.get("label", "")))
     save_catalysts(upcoming, out_dir)   # pruning past events is the point
     return upcoming

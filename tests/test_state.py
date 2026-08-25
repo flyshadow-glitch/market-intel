@@ -153,3 +153,69 @@ def test_main_catalyst_add_and_list(tmp_path, monkeypatch, capsys):
     state.main(["catalyst", "list", "--today", "2026-07-20"])
     out = capsys.readouterr().out
     assert "2026-11-30" in out and "Acme Bio PDUFA" in out
+
+
+# --- news dedup: tracking params are noise, article identifiers are not ---
+
+def test_normalize_news_key_keeps_meaningful_query(tmp_path):
+    n = state._normalize_news_key
+    # ?id= IS the article identity on many IR portals — must not collapse
+    assert n("https://ir.example.com/news.php?id=101") != n("https://ir.example.com/news.php?id=202")
+
+
+def test_normalize_news_key_strips_known_trackers():
+    n = state._normalize_news_key
+    bare = n("https://example.com/a")
+    for junk in ("?utm_source=x&utm_medium=y", "?oc=5", "?gclid=abc", "?fbclid=abc",
+                 "?mc_cid=1&mc_eid=2", "?ref=twitter"):
+        assert n("https://example.com/a" + junk) == bare, junk
+
+
+def test_normalize_news_key_query_order_insensitive():
+    n = state._normalize_news_key
+    assert n("https://example.com/a?b=2&id=1") == n("https://example.com/a?id=1&b=2")
+
+
+def test_normalize_news_key_mixes_tracker_and_identifier():
+    n = state._normalize_news_key
+    assert n("https://ir.example.com/n.php?id=101&utm_source=news") == \
+           n("https://ir.example.com/n.php?id=101")
+
+
+def test_news_dedup_does_not_over_merge_distinct_articles(tmp_path):
+    out = str(tmp_path)
+    state.mark_seen("news", ["https://ir.example.com/news.php?id=101"], out_dir=out)
+    fresh = state.filter_new("news", ["https://ir.example.com/news.php?id=202"], out_dir=out)
+    assert fresh == ["https://ir.example.com/news.php?id=202"]
+
+
+# --- catalyst calendar: a read must never destroy the ledger ---
+
+def test_upcoming_catalysts_rejects_malformed_today(tmp_path):
+    import pytest
+    out = str(tmp_path)
+    state.add_catalyst("2026-11-30", "Acme Bio PDUFA", out_dir=out)
+    for bad in ("Aug 21, 2026", "August 21 2026", "today", "abc", "9999", "2026-8-21"):
+        with pytest.raises(ValueError):
+            state.upcoming_catalysts(out_dir=out, today=bad)
+
+
+def test_upcoming_catalysts_preserves_file_on_malformed_today(tmp_path):
+    import pytest
+    out = str(tmp_path)
+    state.add_catalyst("2026-11-30", "Acme Bio PDUFA", out_dir=out)
+    state.add_catalyst("2027-02-23", "Acme Bio second PDUFA", out_dir=out)
+    with pytest.raises(ValueError):
+        state.upcoming_catalysts(out_dir=out, today="Aug 21, 2026")
+    # the ledger must be exactly as it was — a failed read writes nothing
+    assert len(state.load_catalysts(out_dir=out)) == 2
+
+
+def test_upcoming_catalysts_keeps_unparseable_stored_dates(tmp_path):
+    # fail-open: a corrupt row is surfaced, never silently pruned
+    out = str(tmp_path)
+    state.save_catalysts([{"date": "not-a-date", "label": "corrupt row"},
+                          {"date": "2026-11-30", "label": "good"}], out_dir=out)
+    up = state.upcoming_catalysts(out_dir=out, today="2026-08-21")
+    assert "corrupt row" in [c["label"] for c in up]
+    assert len(state.load_catalysts(out_dir=out)) == 2
