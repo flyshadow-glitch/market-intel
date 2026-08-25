@@ -249,22 +249,45 @@ it was found.
 A busy leader reads it in under a minute. Aim for **under 300 words** even with several
 topics — brevity per item, breadth across topics.
 
+**A one-line italic subtitle** under the title — what the brief covers, the window it spans,
+and who it is for. *"What moved in marketing analytics and measurement, Jul 21 to Aug 6. For
+practitioners and their leads."*
+
 **Bottom line** — one or two sentences. The single thing the reader should walk away with.
 Not a summary of contents. A point of view.
 
-**One block per topic** — the topics are the `category` values from `feeds.json`. For each
-topic that has a real signal this week:
-- A short header (the topic name).
-- One line on what happened, naming specific players/events, each linked to its source.
-- A ***So what:*** line — the implication for the reader's work or positioning.
-  **Mandatory.** No so-what, cut the block.
+**Thematic sections — group by what the period actually did, not by configured topic.** The
+`category` values in `feeds.json` are the *lens* (what to watch); they are never the brief's
+outline. A heading states a claim the period supports — "The measurement industry consolidated
+twice in a week", "Check your own plumbing", "Regulation and enforcement". Sentence case. Never
+a bare noun-phrase category name. Two to five sections is the usual shape; let the period
+decide. Within a section:
+- Bulleted items, each opening with a **bold sentence-case headline that carries the verdict**,
+  then one or two sentences of evidence. Every item links to its real source.
+- Where two items mean more together than apart, close the section with one short synthesis
+  paragraph — "Read together: ..." — naming the joint implication. This is usually the
+  highest-value line in the brief. Use it where it is earned, not in every section.
 
-**What shipped** — only real releases that survived the memory filter. One line each, linked:
-what's new and why it matters. If nothing shipped, write "Nothing shipped this week." Star
-counts are not a signal and never appear.
+**Coverage line (mandatory)** — thematic sections are editorial, so a configured topic could
+otherwise disappear without the reader knowing it was checked. Close with one line naming every
+lens topic that produced nothing: "Swept and quiet this cycle: Incrementality, BI & Data
+Platform." A quiet topic is reported as quiet. It is never silently dropped — that is what makes
+an absent section trustworthy.
 
-**On the radar** — at most 3 one-liners for things worth knowing but not acting on. Tag each
-with relevance in parentheses, e.g. "(matters if you touch CTV planning)".
+**Dates that matter** — render as a table, not a list: `Date | What | Why you care`. The third
+column is the point; a date with no consequence does not belong. Horizon is the next ~45 days,
+drawn from the catalyst calendar.
+
+**What shipped / On the radar** — fold these into the thematic sections when they fit the
+narrative. A release that fixes a live bug belongs under "Check your own plumbing", not in a
+separate list. Keep them as their own tables only when there is real volume and no theme holds
+them. Star counts are not a signal and never appear.
+
+**Provenance line (mandatory)** — close with one italic line: the lens in a clause, then the
+memory. *"Deduped against 27 previously reported stories; all items here are new since the last
+brief."* That sentence is the product's differentiator stated as a fact the reader can check,
+and the number comes free from `state.py`. Never omit it, and never estimate the count — use
+the real one.
 
 ### Hard rules
 
@@ -476,7 +499,9 @@ than 3 items in a block without synthesis.
   strip, and an "On the radar" list. Tables/charts may be embedded as inline HTML/SVG. Subject:
   `Market Intelligence — <date>`. Create the draft addressed to the user; they send it.
 
-The pillars/topics shown come straight from the configured categories — do not invent or hardcode them.
+Thematic section headings are written for the period (see "The brief format"); the configured
+categories are the lens behind them, and every lens topic that produced nothing still gets named
+in the coverage line. Never invent an *item* or a link — only the grouping is editorial.
 
 ## Configuration (all under `config/`, user-editable)
 
